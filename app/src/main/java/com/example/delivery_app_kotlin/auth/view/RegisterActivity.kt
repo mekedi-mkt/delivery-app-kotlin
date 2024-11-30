@@ -53,6 +53,7 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         binding.registerButton.setOnClickListener {
+            val name = binding.editTextName.text.toString()
             val email = binding.emailEditText.text.toString()
             val password = binding.passwordEditText.text.toString()
             val selectedId = binding.userRadioGroup.checkedRadioButtonId
@@ -60,7 +61,7 @@ class RegisterActivity : AppCompatActivity() {
             if (email.isNotEmpty() && password.isNotEmpty() && selectedId != -1) {
                 val selectedRadioButton = findViewById<RadioButton>(selectedId)
                 val userType = selectedRadioButton.text.toString()
-                authViewModel.register(email, password, userType)
+                authViewModel.register(name, email, password, userType)
             } else if (selectedId == -1) {
                 Toast.makeText(this, "Please choose user type", Toast.LENGTH_SHORT).show()
             } else {

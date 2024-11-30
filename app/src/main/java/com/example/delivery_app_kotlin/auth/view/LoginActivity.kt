@@ -3,14 +3,12 @@ package com.example.delivery_app_kotlin.auth.view
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.delivery_app_kotlin.MainActivity
+import com.example.delivery_app_kotlin.main.view.MainActivity
 import com.example.delivery_app_kotlin.auth.viewmodel.AuthViewModel
 import com.example.delivery_app_kotlin.databinding.ActivityLoginBinding
-import com.google.firebase.FirebaseApp
 
 class LoginActivity : AppCompatActivity() {
 

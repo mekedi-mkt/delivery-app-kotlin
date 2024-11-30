@@ -2,6 +2,7 @@ package com.example.delivery_app_kotlin.auth.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.RadioButton
 import android.widget.Toast
 import androidx.activity.*
 import androidx.appcompat.app.AppCompatActivity
@@ -54,11 +55,13 @@ class RegisterActivity : AppCompatActivity() {
         binding.registerButton.setOnClickListener {
             val email = binding.emailEditText.text.toString()
             val password = binding.passwordEditText.text.toString()
-            val userRadioGroup = binding.userRadioGroup //.checkedRadioButtonId
+            val selectedId = binding.userRadioGroup.checkedRadioButtonId
 
-            if (email.isNotEmpty() && password.isNotEmpty() && userRadioGroup.checkedRadioButtonId != -1) {
-                authViewModel.register(email, password)
-            } else if (userRadioGroup.checkedRadioButtonId == -1) {
+            if (email.isNotEmpty() && password.isNotEmpty() && selectedId != -1) {
+                val selectedRadioButton = findViewById<RadioButton>(selectedId)
+                val userType = selectedRadioButton.text.toString()
+                authViewModel.register(email, password, userType)
+            } else if (selectedId == -1) {
                 Toast.makeText(this, "Please choose user type", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show()

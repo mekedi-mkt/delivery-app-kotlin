@@ -41,28 +41,7 @@ class MainActivity : AppCompatActivity() {
         deliveryViewModel = ViewModelProvider(this)[DeliveryViewModel::class.java]
         userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
         // Observe delivery data
-        deliveryViewModel.delivery.observe(this) { delivery ->
-            if (delivery != null) {
-                binding.textPickup.text = delivery.pickup
-                binding.textDest.text = delivery.destination
-
-                if (deliveryViewModel.selectedDG.value == null) {
-                    userViewModel.getDeliveryGuys()
-                    val dg =
-                        userViewModel.deliveryGuys.value?.filter { dg -> dg.userId == delivery.deliveryGuyId }
-                    if (dg != null)
-                        binding.textDeliveryGuy.text = dg[0].name
-                } else
-                    binding.textDeliveryGuy.text = deliveryViewModel.selectedDG.value?.name
-
-
-                binding.noDeliveryLayout.visibility = GONE
-                binding.currentDeliveryLayout.visibility = VISIBLE
-            } else {
-                binding.noDeliveryLayout.visibility = VISIBLE
-                binding.currentDeliveryLayout.visibility = GONE
-            }
-        }
+        observeDeliveryData()
         deliveryViewModel.selectedDG.observe(this) {
             if (it != null) {
                 binding.textDeliveryGuy.text = it.name
@@ -85,6 +64,41 @@ class MainActivity : AppCompatActivity() {
 
         binding.buttonCancel.setOnClickListener {
             deliveryViewModel.cancelDelivery()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        observeDeliveryData()
+        deliveryViewModel.getDelivery()
+    }
+
+    private fun observeDeliveryData() {
+        deliveryViewModel.delivery.observe(this) { delivery ->
+            if (delivery != null) {
+                binding.textPickup.text = delivery.pickup
+                binding.textDest.text = delivery.destination
+
+                if (deliveryViewModel.selectedDG.value == null) {
+                    userViewModel.getDeliveryGuys()
+                    val dg =
+                        userViewModel.deliveryGuys.value?.filter { dg -> dg.userId == delivery.deliveryGuyId }
+                    if (dg != null)
+                        binding.textDeliveryGuy.text = dg[0].name
+                } else
+                    binding.textDeliveryGuy.text = deliveryViewModel.selectedDG.value?.name
+
+
+                binding.noDeliveryLayout.visibility = GONE
+                binding.currentDeliveryLayout.visibility = VISIBLE
+
+                // Location Tracking
+//                initializeLocationTracking()
+
+            } else {
+                binding.noDeliveryLayout.visibility = VISIBLE
+                binding.currentDeliveryLayout.visibility = GONE
+            }
         }
     }
 

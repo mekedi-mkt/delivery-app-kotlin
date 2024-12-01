@@ -30,10 +30,13 @@ class DeliveryViewModel : ViewModel() {
 
     fun addNewDelivery(pickup: String, destination: String) {
         val clientId = auth.currentUser!!.uid
-        val delivery = Delivery(clientId, _selectedDG.value!!.userId, pickup, destination)
-        deliveryRepo.saveDeliveryToFirestore(delivery)
-        _selectedDG.value = null
-        _delivery.value = delivery
+        val delivery = Delivery(null, clientId, _selectedDG.value!!.userId, pickup, destination)
+        viewModelScope.launch {
+            deliveryRepo.saveDeliveryToFirestore(delivery)
+//        _selectedDG.value = null
+            _delivery.value = delivery
+
+        }
     }
 
     fun getDelivery() {
@@ -50,7 +53,7 @@ class DeliveryViewModel : ViewModel() {
 
     fun cancelDelivery() {
         viewModelScope.launch {
-            deliveryRepo.cancelDelivery(delivery.value!!.id)
+            deliveryRepo.cancelDelivery(delivery.value!!.id!!)
             _selectedDG.value = null
             _delivery.value = null
         }

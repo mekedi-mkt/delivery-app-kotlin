@@ -14,4 +14,30 @@ class UserRepository(private val firestore: FirebaseFirestore) {
             throw Exception("Failed to fetch user data: ${e.message}")
         }
     }
+
+    suspend fun fetchUsers(): List<UserModel> {
+        return try {
+            val querySnapshot = firestore.collection("users").get().await()
+
+            // Convert the documents into a list of User objects
+            val users = querySnapshot.documents.mapNotNull { document ->
+                document.toObject(UserModel::class.java)
+            }
+
+            users
+        } catch (e: Exception) {
+            throw Exception("Failed to fetch user data: ${e.message}")
+        }
+    }
+
+    suspend fun fetchDeliveryGuys(): List<UserModel> {
+        return try {
+            val users = fetchUsers()
+            return users.filter { user ->
+                user.userType == "Delivery Guy"
+            }
+        } catch (e: Exception) {
+            throw Exception("Failed to fetch delivery guys: ${e.message}")
+        }
+    }
 }

@@ -14,13 +14,21 @@ class UserViewModel : ViewModel() {
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     val userRepository = UserRepository(firestore)
 
-    // LiveData for authentication state
     private val _deliveryGuys = MutableLiveData<List<UserModel>>()
     val deliveryGuys: LiveData<List<UserModel>> get() = _deliveryGuys
+
+    private val _clients = MutableLiveData<List<UserModel>>()
+    val clients: LiveData<List<UserModel>> get() = _clients
 
      fun getDeliveryGuys() {
         viewModelScope.launch {
             _deliveryGuys.value = userRepository.fetchDeliveryGuys()
+        }
+    }
+
+    fun getClients() {
+        viewModelScope.launch {
+            _clients.value = userRepository.fetchClients()
         }
     }
 }

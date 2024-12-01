@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.delivery_app_kotlin.auth.viewmodel.UserViewModel
 import com.example.delivery_app_kotlin.databinding.ActivityNewDeliveryBinding
 import com.example.delivery_app_kotlin.delivery.viewmodel.DeliveryViewModel
+import com.example.delivery_app_kotlin.main.viewmodel.LocationViewModel
 
 class NewDeliveryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNewDeliveryBinding
@@ -44,7 +45,9 @@ class NewDeliveryActivity : AppCompatActivity() {
             if (pickup.isNotEmpty() && dest.isNotEmpty() &&
                 deliveryViewModel.selectedDG.value != null
             ) {
-                deliveryViewModel.addNewDelivery(pickup, dest)
+//                val locationViewModel = ViewModelProvider(this)[LocationViewModel::class.java]
+//                val userLocation = locationViewModel.userLocation.value
+                deliveryViewModel.addNewDelivery(applicationContext, pickup, dest)
             } else {
                 Toast.makeText(this, "Please fill out the details", Toast.LENGTH_SHORT).show()
             }

@@ -1,5 +1,7 @@
 package com.example.delivery_app_kotlin.delivery.viewmodel
 
+import android.content.Context
+import android.location.Location
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,8 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.delivery_app_kotlin.auth.model.entities.UserModel
 import com.example.delivery_app_kotlin.delivery.model.entities.Delivery
 import com.example.delivery_app_kotlin.delivery.model.repo.DeliveryRepository
+import com.example.delivery_app_kotlin.main.model.repo.LocationRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
 import kotlinx.coroutines.launch
 
 class DeliveryViewModel : ViewModel() {
@@ -28,25 +32,43 @@ class DeliveryViewModel : ViewModel() {
         _selectedDG.value = dg
     }
 
-    fun addNewDelivery(pickup: String, destination: String) {
-        val clientId = auth.currentUser!!.uid
-        val delivery = Delivery(null, clientId, _selectedDG.value!!.userId, pickup, destination)
-        viewModelScope.launch {
-            deliveryRepo.saveDeliveryToFirestore(delivery)
-//        _selectedDG.value = null
-            _delivery.value = delivery
+    fun addNewDelivery(context: Context, pickup: String, destination: String) {
+//        val destLocation = GeoPoint(userLocation.latitude, userLocation.longitude)
+        var destLocation: GeoPoint? = null
+        val locationRepo = LocationRepository(context)
+        locationRepo.fetchLocation(context) { location ->
+            if (location != null) {
+                destLocation = GeoPoint(location.latitude, location.longitude)
+                val clientId = auth.currentUser!!.uid
+                val delivery = Delivery(
+                    null, clientId, _selectedDG.value!!.userId, pickup, destination,
+                    destLocation!!
+                )
+                viewModelScope.launch {
+                    deliveryRepo.saveDeliveryToFirestore(delivery)
+                    _delivery.value = delivery
 
+                }
+            }
         }
     }
 
-    fun getDelivery() {
+    fun getDelivery(userType: String) {
         viewModelScope.launch {
-            val clientId = auth.currentUser!!.uid
-            val currentDelivery = deliveryRepo.fetchDeliveries().filter { delivery ->
-                delivery.clientId == clientId
+            val userId = auth.currentUser!!.uid
+            if (userType == "Client") {
+                val currentDelivery = deliveryRepo.fetchDeliveries().filter { delivery ->
+                    delivery.clientId == userId
+                }
+                if (currentDelivery.isNotEmpty())
+                    _delivery.value = currentDelivery[0]
+            } else {
+                val currentDelivery = deliveryRepo.fetchDeliveries().filter { delivery ->
+                    delivery.deliveryGuyId == userId
+                }
+                if (currentDelivery.isNotEmpty())
+                    _delivery.value = currentDelivery[0]
             }
-            if (currentDelivery.isNotEmpty())
-                _delivery.value = currentDelivery[0]
 
         }
     }

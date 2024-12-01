@@ -40,4 +40,15 @@ class UserRepository(private val firestore: FirebaseFirestore) {
             throw Exception("Failed to fetch delivery guys: ${e.message}")
         }
     }
+
+    suspend fun fetchClients(): List<UserModel> {
+        return try {
+            val users = fetchUsers()
+            return users.filter { user ->
+                user.userType == "Client"
+            }
+        } catch (e: Exception) {
+            throw Exception("Failed to fetch clients: ${e.message}")
+        }
+    }
 }

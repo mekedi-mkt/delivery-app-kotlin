@@ -61,4 +61,9 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx") // :2.8.7
+
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+//    implementation("com.google.android.gms:play-services-maps:19.0.0")
+//    implementation ("org.maplibre.gl:android-sdk")
+    implementation ("org.osmdroid:osmdroid-android:6.1.15")
 }
